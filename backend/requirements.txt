@@ -1,0 +1,7 @@
+Flask
+Flask-Cors
+Flask-SQLAlchemy
+Flask-WTF
+Flask_WTF
+Flask-Migrate
+mysql-connector-python # Required for MySQL connection
