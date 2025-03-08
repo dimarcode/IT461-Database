@@ -23,7 +23,7 @@ services:
     environment:
       - FLASK_APP=teachmeumb.py
       - FLASK_DEBUG=1
-      - DATABASE_URL=mysql+pymysql://user:password@mysql/dbname
+#      - DATABASE_URL=mysql+pymysql://user:password@mysql/dbname
 
   mysql:
     image: mysql:8.0
