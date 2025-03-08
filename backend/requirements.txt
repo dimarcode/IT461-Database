@@ -1,7 +1,7 @@
+# loads necessary flask packages
 Flask
 Flask-Cors
-Flask-SQLAlchemy
-Flask-WTF
-Flask_WTF
-Flask-Migrate
+Flask-SQLAlchemy # Required for SQLite
+Flask-WTF # forms
+Flask-Migrate # Required for migrating database with any changes
 mysql-connector-python # Required for MySQL connection
