@@ -16,7 +16,7 @@ class Customer(db.Model):
     email: so.Mapped[str] = so.mapped_column(sa.String(100), index=True, unique=True)
     
     transactions: so.WriteOnlyMapped['Transaction'] = so.relationship(
-        back_populates='purchasing_customer')
+        back_populates='customer')
 
     def __repr__(self):
         return '<Customer {}>'.format(self.custID)
@@ -26,7 +26,6 @@ class User(db.Model):
     username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
     email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
-    cust_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Customer.id), index=True)
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -39,7 +38,7 @@ class Transaction(db.Model):
     total: so.Mapped[float] = so.mapped_column(sa.Numeric(10, 2), nullable=False)
     
     # Relationship to the Customer table
-    purchasing_customer: so.Mapped[Customer] = so.relationship(back_populates='transactions')
+    customer: so.Mapped[Customer] = so.relationship(back_populates='transactions')
     
     def __repr__(self):
         return '<transaction {}>'.format(self.transaction_id)

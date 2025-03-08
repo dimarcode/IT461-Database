@@ -3,5 +3,3 @@
 Database project for IT461 - Systems Analysis and Design
 
 ## Database Upgrade and Downgrade Workflow
-
-I 
