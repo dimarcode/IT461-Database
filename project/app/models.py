@@ -1,21 +1,12 @@
+from datetime import datetime, timezone
+from hashlib import md5
+from typing import Optional
 import sqlalchemy as sa
 import sqlalchemy.orm as so
-from app import login
-from app import db
-from datetime import datetime, timezone
-from typing import Optional
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from hashlib import md5
+from werkzeug.security import generate_password_hash, check_password_hash
+from app import db, login
 
-
-# !!!!! any changes to this file require a db migration to take effect!!!!!
-# Please see Readme.md
-
-
-@login.user_loader
-def load_user(id):
-    return db.session.get(User, int(id))
 
 class User(UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -27,31 +18,39 @@ class User(UserMixin, db.Model):
     about_me: so.Mapped[Optional[str]] = so.mapped_column(sa.String(140))
     last_seen: so.Mapped[Optional[datetime]] = so.mapped_column(
         default=lambda: datetime.now(timezone.utc))
-    def avatar(self, size):
-        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
-    # links to post #
+
     posts: so.WriteOnlyMapped['Post'] = so.relationship(
         back_populates='author')
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
+
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode('utf-8')).hexdigest()
+        return f'https://www.gravatar.com/avatar/{digest}?d=identicon&s={size}'
+
+
+@login.user_loader
+def load_user(id):
+    return db.session.get(User, int(id))
+
 
 class Post(db.Model):
-    # primary key
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    # foreign key from 'user' table
-    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
-                                               index=True)
     body: so.Mapped[str] = so.mapped_column(sa.String(140))
     timestamp: so.Mapped[datetime] = so.mapped_column(
         index=True, default=lambda: datetime.now(timezone.utc))
-    # links to user entry
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
+                                               index=True)
+
     author: so.Mapped[User] = so.relationship(back_populates='posts')
+
     def __repr__(self):
         return '<Post {}>'.format(self.body)
 

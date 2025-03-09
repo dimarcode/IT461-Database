@@ -40,7 +40,6 @@ services:
 #     volumes:
 #       - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf  # Make sure the left side is a FILE
 
-# volumes:
-#   mysql-data:
-#   pycache:
-#     driver: local
+volumes:
+  pycache:
+    driver: local
