@@ -1,6 +1,6 @@
 # IT461-Database
 
-Adapted from [The Flask Mega-Tutorial](The Flask Mega-Tutorial) by Miguel Grinberg
+Adapted from [The Flask Mega-Tutorial by Miguel Grinberg](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world)
 
 Database project for IT461 - Systems Analysis and Design
 
