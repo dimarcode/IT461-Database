@@ -9,14 +9,8 @@ from flask_login import UserMixin
 from hashlib import md5
 
 
-# !!!!! any changes to this file require a db migration to take effect!!!!!:
-# first enter virtual environment (example uses docker):
-# $ docker exec -it <container-name> sh
-# >>> flask db migrate -m "<context for migration>"
-# >>> flask db upgrade
-# to rollback changes for whatever reason:
-# >>> flask db downgrade
-# url for migration details: https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database
+# !!!!! any changes to this file require a db migration to take effect!!!!!
+# Please see Readme.md
 
 
 @login.user_loader

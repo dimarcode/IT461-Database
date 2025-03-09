@@ -1,5 +1,7 @@
 # IT461-Database
 
+Adapted from [The Flask Mega-Tutorial](The Flask Mega-Tutorial) by Miguel Grinberg
+
 Database project for IT461 - Systems Analysis and Design
 
 ## Database migration
