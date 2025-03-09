@@ -1,16 +1,16 @@
-from flask import render_template, flash, redirect, url_for, request
+
 from app import app
 from app import db
 from app.forms import LoginForm
-from flask_login import current_user, login_user
-from flask_login import logout_user
-from flask_login import login_required
-import sqlalchemy as sa
-from app import db
 from app.models import User
 from app.forms import RegistrationForm
+from datetime import datetime, timezone
+from flask import render_template, flash, redirect, url_for, request
+from flask_login import current_user, login_user, logout_user, login_required
+import sqlalchemy as sa
 from urllib.parse import urlsplit
 
+# main page
 @app.route('/')
 @app.route('/index')
 @login_required
@@ -28,7 +28,14 @@ def index():
     ]
     return render_template('index.html', title='Home Page', posts=posts)
 
+# record time of user's last site visit
+@app.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.now(timezone.utc)
+        db.session.commit()
 
+# user login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -47,13 +54,13 @@ def login():
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
-
+# user logout
 @app.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('index'))
 
-
+#register user
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -68,5 +75,15 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+# user profile
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = db.first_or_404(sa.select(User).where(User.username == username))
+    posts = [
+        {'author': user, 'body': 'Test post #1'},
+        {'author': user, 'body': 'Test post #2'}
+    ]
+    return render_template('user.html', user=user, posts=posts)
 # if __name__ == '__main__':
 #     app.run(debug=True, host='127.0.0.1', port=5000)
