@@ -5,5 +5,7 @@ Flask-WTF # forms
 Flask-Migrate # required for migrating database with any changes
 flask-login # required for password verification
 Flask-SQLAlchemy # required for SQLite
-sqlalchemy.orm # might delete later
-mysql-connector-python # required for MySQL connection
+email-validator
+sqlalchemy.orm
+
+# mysql-connector-python # required for MySQL connection
