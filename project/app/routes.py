@@ -6,7 +6,7 @@ import sqlalchemy as sa
 from sqlalchemy.sql.functions import coalesce
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm, AddCustomerForm
-from app.models import User, Post, Customer, Item
+from app.models import User, Post, Customer, Item, Order
 
 
 @app.before_request
@@ -172,6 +172,7 @@ def explore():
 
 
 @app.route('/customers', methods=['GET', 'POST'])
+@login_required
 def customers():
     
     customers = Customer.query.order_by(Customer.last_name.collate("NOCASE")).all()
@@ -197,11 +198,13 @@ def add_customer():
     return render_template('add_customer.html', title='Add Customer', form=form)
 
 @app.route('/items', methods=['GET', 'POST'])
+@login_required
 def items():
     items = Item.query.order_by(Item.item_name.collate("NOCASE")).all()
-
-     # Add a print statement to see what's in the first customer record
-    # if customers:
-    #     first_customer = customers[0]
-    #     print(f"First customer: ID={first_customer.id}, Name={first_customer.first_name} {first_customer.last_name}, Email={first_customer.email}")
     return render_template('items.html', title='Items', items=items)
+
+@app.route('/orders', methods=['Get', 'POST'])
+@login_required
+def orders():
+    orders = Order.query.order_by(Order.date).all()
+    return render_template('orders.html', title='Orders', orders=orders)

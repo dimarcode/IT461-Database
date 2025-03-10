@@ -90,6 +90,21 @@ class User(UserMixin, db.Model):
             .order_by(Post.timestamp.desc())
         )
 
+
+class Post(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    body: so.Mapped[str] = so.mapped_column(sa.String(140))
+    timestamp: so.Mapped[datetime] = so.mapped_column(
+        index=True, default=lambda: datetime.now(timezone.utc))
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
+                                               index=True)
+
+    author: so.Mapped[User] = so.relationship(back_populates='posts')
+
+    def __repr__(self):
+        return '<Post {}>'.format(self.body)
+
+
 class Customer(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     first_name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, nullable=False)
@@ -100,6 +115,8 @@ class Customer(db.Model):
     zip: so.Mapped[Optional[str]] = so.mapped_column(sa.String(10))
     phone: so.Mapped[Optional[str]] = so.mapped_column(sa.String(20))
     email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, nullable=False)
+
+    orders: so.Mapped[list['Order']] = so.relationship('Order', back_populates="customer")
 
     def __repr__(self):
         return '<Customer {}>'.format(self.email)
@@ -118,22 +135,23 @@ def load_user(id):
     return db.session.get(User, int(id))
 
 
+class Order(db.Model):
+    order_id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    customer_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('customer.id'), nullable=False)
+    order_number: so.Mapped[int] = so.mapped_column(nullable=False, unique=True)
+    date: so.Mapped[datetime] = so.mapped_column(
+        index=True, default=lambda: datetime.now(timezone.utc))
+    customer: so.Mapped['Customer'] = so.relationship(back_populates="orders")
+ #    order_items: so.Mapped[list['OrderLineItem']] = so.relationship(back_populates="order", cascade="all, delete-orphan")
+
+    def __repr__(self):
+        return f"<Order {self.order_number} - Customer {self.customer_id}>"
 
 
 
 # Orders and line items ---------------------------------------------------------------------------------------------------
 
-# class Order(db.Model):
-#     order_id: so.Mapped[int] = so.mapped_column(primary_key=True)
-#     customer_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('customer.id'), nullable=False)
-#     order_number: so.Mapped[int] = so.mapped_column(nullable=False, unique=True)
-#     date: so.Mapped[date] = so.mapped_column(sa.Date, nullable=False)
 
-#     customer: so.Mapped['Customer'] = so.relationship(back_populates="orders")
-#     order_items: so.Mapped[list['OrderLineItem']] = so.relationship(back_populates="order", cascade="all, delete-orphan")
-
-#     def __repr__(self):
-#         return f"<Order {self.order_number} - Customer {self.customer_id}>"
 
 # class OrderLineItem(db.Model):
 #     order_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('order.order_id'), primary_key=True)
@@ -149,18 +167,7 @@ def load_user(id):
 
 # ----------------------------------------------------------------------------------------------------------------------------
 
-class Post(db.Model):
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    body: so.Mapped[str] = so.mapped_column(sa.String(140))
-    timestamp: so.Mapped[datetime] = so.mapped_column(
-        index=True, default=lambda: datetime.now(timezone.utc))
-    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),
-                                               index=True)
 
-    author: so.Mapped[User] = so.relationship(back_populates='posts')
-
-    def __repr__(self):
-        return '<Post {}>'.format(self.body)
 
 # following posts query (not including their own posts)
 
