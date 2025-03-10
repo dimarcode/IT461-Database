@@ -3,9 +3,11 @@ from urllib.parse import urlsplit
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 import sqlalchemy as sa
+from sqlalchemy.sql.functions import coalesce
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm
-from app.models import User, Post
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm, AddCustomerForm
+from app.models import User, Post, Customer, Item
+
 
 @app.before_request
 def before_request():
@@ -25,9 +27,16 @@ def index():
         db.session.commit()
         flash('Your post is now live!')
         return redirect(url_for('index'))
-    posts = db.session.scalars(current_user.following_posts()).all()
-    return render_template("index.html", title='Home Page', form=form,
-                           posts=posts)
+    page = request.args.get('page', 1, type=int)
+    posts = db.paginate(current_user.following_posts(), page=page,
+                        per_page=app.config['POSTS_PER_PAGE'], error_out=False)
+    next_url = url_for('index', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('index', page=posts.prev_num) \
+        if posts.has_prev else None
+    return render_template('index.html', title='Home', form=form,
+                           posts=posts.items, next_url=next_url,
+                           prev_url=prev_url)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -74,12 +83,18 @@ def register():
 @login_required
 def user(username):
     user = db.first_or_404(sa.select(User).where(User.username == username))
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
+    page = request.args.get('page', 1, type=int)
+    query = user.posts.select().order_by(Post.timestamp.desc())
+    posts = db.paginate(query, page=page,
+                        per_page=app.config['POSTS_PER_PAGE'],
+                        error_out=False)
+    next_url = url_for('user', username=user.username, page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('user', username=user.username, page=posts.prev_num) \
+        if posts.has_prev else None
     form = EmptyForm()
-    return render_template('user.html', user=user, posts=posts, form=form)
+    return render_template('user.html', user=user, posts=posts.items,
+                           next_url=next_url, prev_url=prev_url, form=form)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -144,6 +159,49 @@ def unfollow(username):
 @app.route('/explore')
 @login_required
 def explore():
+    page = request.args.get('page', 1, type=int)
     query = sa.select(Post).order_by(Post.timestamp.desc())
-    posts = db.session.scalars(query).all()
-    return render_template('index.html', title='Explore', posts=posts)
+    posts = db.paginate(query, page=page,
+                        per_page=app.config['POSTS_PER_PAGE'], error_out=False)
+    next_url = url_for('explore', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('explore', page=posts.prev_num) \
+        if posts.has_prev else None
+    return render_template('index.html', title='Explore', posts=posts.items,
+                           next_url=next_url, prev_url=prev_url)
+
+
+@app.route('/customers', methods=['GET', 'POST'])
+def customers():
+    
+    customers = Customer.query.order_by(Customer.last_name.collate("NOCASE")).all()
+
+     # Add a print statement to see what's in the first customer record
+    # if customers:
+    #     first_customer = customers[0]
+    #     print(f"First customer: ID={first_customer.id}, Name={first_customer.first_name} {first_customer.last_name}, Email={first_customer.email}")
+    return render_template('customers.html', title='Customers', customers=customers)
+
+
+@app.route('/add_customer', methods=['GET', 'POST'])
+@login_required
+def add_customer():
+    form = AddCustomerForm()
+    if form.validate_on_submit():
+        new_customer = Customer(first_name=form.first_name.data, last_name=form.last_name.data, address=form.address.data, 
+                            city=form.city.data, state=form.state.data, zip=form.zip.data, phone=form.phone.data,  email=form.email.data)
+        db.session.add(new_customer)
+        db.session.commit()
+        flash('New customer added!')
+        return redirect(url_for('customers'))
+    return render_template('add_customer.html', title='Add Customer', form=form)
+
+@app.route('/items', methods=['GET', 'POST'])
+def items():
+    items = Item.query.order_by(Item.item_name.collate("NOCASE")).all()
+
+     # Add a print statement to see what's in the first customer record
+    # if customers:
+    #     first_customer = customers[0]
+    #     print(f"First customer: ID={first_customer.id}, Name={first_customer.first_name} {first_customer.last_name}, Email={first_customer.email}")
+    return render_template('items.html', title='Items', items=items)

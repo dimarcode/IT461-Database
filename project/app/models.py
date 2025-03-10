@@ -17,7 +17,6 @@ followers = sa.Table(
               primary_key=True)
 )
 
-
 class User(UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True,
@@ -40,6 +39,7 @@ class User(UserMixin, db.Model):
         secondaryjoin=(followers.c.follower_id == id),
         back_populates='following')
 
+# user note
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
@@ -90,11 +90,64 @@ class User(UserMixin, db.Model):
             .order_by(Post.timestamp.desc())
         )
 
+class Customer(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    first_name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, nullable=False)
+    last_name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, nullable=False)
+    address: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
+    city: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))
+    state: so.Mapped[Optional[str]] = so.mapped_column(sa.String(2))
+    zip: so.Mapped[Optional[str]] = so.mapped_column(sa.String(10))
+    phone: so.Mapped[Optional[str]] = so.mapped_column(sa.String(20))
+    email: so.Mapped[str] = so.mapped_column(sa.String(120), index=True, nullable=False)
+
+    def __repr__(self):
+        return '<Customer {}>'.format(self.email)
+    
+
+class Item(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    item_name: so.Mapped[str] = so.mapped_column(sa.String(255), nullable=False)
+    price: so.Mapped[float] = so.mapped_column(sa.Numeric(10, 2), nullable=False)
+
+    def __repr__(self):
+        return f"<Item {self.item_name} - ${self.price}>"
 
 @login.user_loader
 def load_user(id):
     return db.session.get(User, int(id))
 
+
+
+
+
+# Orders and line items ---------------------------------------------------------------------------------------------------
+
+# class Order(db.Model):
+#     order_id: so.Mapped[int] = so.mapped_column(primary_key=True)
+#     customer_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('customer.id'), nullable=False)
+#     order_number: so.Mapped[int] = so.mapped_column(nullable=False, unique=True)
+#     date: so.Mapped[date] = so.mapped_column(sa.Date, nullable=False)
+
+#     customer: so.Mapped['Customer'] = so.relationship(back_populates="orders")
+#     order_items: so.Mapped[list['OrderLineItem']] = so.relationship(back_populates="order", cascade="all, delete-orphan")
+
+#     def __repr__(self):
+#         return f"<Order {self.order_number} - Customer {self.customer_id}>"
+
+# class OrderLineItem(db.Model):
+#     order_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('order.order_id'), primary_key=True)
+#     seq: so.Mapped[int] = so.mapped_column(primary_key=True)
+#     item_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('item.id'), nullable=False)
+#     qty: so.Mapped[int] = so.mapped_column(nullable=False)
+
+#     order: so.Mapped['Order'] = so.relationship(back_populates="order_items")
+#     item: so.Mapped['Item'] = so.relationship()
+
+#     def __repr__(self):
+#         return f"<OrderLineItem Order {self.order_id} Seq {self.seq} - Item {self.item_id} x {self.qty}>"
+
+# ----------------------------------------------------------------------------------------------------------------------------
 
 class Post(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -108,7 +161,7 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
-    
+
 # following posts query (not including their own posts)
 
     # def following_posts(self):

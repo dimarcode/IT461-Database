@@ -11,11 +11,13 @@
         <div>
             Microblog:
             <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('explore') }}">Explore</a>
+            <a href="{{ url_for('customers') }}">Customers</a>
+            <a href="{{ url_for('items') }}">Items</a>
             {% if current_user.is_anonymous %}
             <a href="{{ url_for('login') }}">Login</a>
             {% else %}
             <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
-            <a href="{{ url_for('explore') }}">Explore</a>
             <a href="{{ url_for('logout') }}">Logout</a>
             {% endif %}
         </div>
@@ -30,5 +32,5 @@
         {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}
-    </body>
+  </body>
 </html>

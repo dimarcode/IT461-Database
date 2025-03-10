@@ -1,11 +1,38 @@
-# loads necessary flask packages
-Flask
-Flask-Cors
-Flask-WTF # forms
-Flask-Migrate # required for migrating database with any changes
-flask-login # required for password verification
-Flask-SQLAlchemy # required for SQLite
-email-validator
-sqlalchemy.orm
 aiosmtpd
-# mysql-connector-python # required for MySQL connection
+alembic
+atpublic
+attrs
+Babel
+blinker
+certifi
+charset-normalizer
+click
+dnspython
+email-validator
+Flask
+flask-babel
+Flask-Login
+Flask-Mail
+Flask-Migrate
+Flask-Moment
+Flask-SQLAlchemy
+Flask-WTF
+greenlet
+idna
+itsdangerous
+Jinja2
+langdetect
+Mako
+MarkupSafe
+packaging
+PyJWT
+python-dotenv
+pytz
+requests
+setuptools
+six
+SQLAlchemy
+typing_extensions
+urllib3
+Werkzeug
+WTForms
