@@ -31,9 +31,9 @@
                 <p><strong>Order #{{ order.id }}</strong></p>
                 <ul>
                     <li>Order ID: {{ order.order_id|default('None', true) }}</li>
-                    <li>Customer_id: ${{ order.customer_id|default('None', true) }}</li>
-                    <li>Order.order_number </li>
-                    <li>Order Date: ${{ order.date|default('None', true) }}</li>
+                    <li>Customer_id: {{ order.customer_id|default('None', true) }}</li>
+                    <li>Order_number: {{ order.order_number|default('None', true) }}</li>
+                    <li>Order Date: {{ order.date|default('None', true) }}</li>
                 </ul>
             </div>
         {% endfor %}

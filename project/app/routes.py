@@ -176,11 +176,6 @@ def explore():
 def customers():
     
     customers = Customer.query.order_by(Customer.last_name.collate("NOCASE")).all()
-
-     # Add a print statement to see what's in the first customer record
-    # if customers:
-    #     first_customer = customers[0]
-    #     print(f"First customer: ID={first_customer.id}, Name={first_customer.first_name} {first_customer.last_name}, Email={first_customer.email}")
     return render_template('customers.html', title='Customers', customers=customers)
 
 
@@ -197,11 +192,13 @@ def add_customer():
         return redirect(url_for('customers'))
     return render_template('add_customer.html', title='Add Customer', form=form)
 
+
 @app.route('/items', methods=['GET', 'POST'])
 @login_required
 def items():
     items = Item.query.order_by(Item.item_name.collate("NOCASE")).all()
     return render_template('items.html', title='Items', items=items)
+
 
 @app.route('/orders', methods=['Get', 'POST'])
 @login_required

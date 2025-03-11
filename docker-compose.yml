@@ -18,7 +18,7 @@ services:
     volumes:
       - ./project:/app
     environment:
-      - FLASK_APP=teachmeumb.py
+      - FLASK_APP=wds-database-app.py
       - FLASK_DEBUG=1
 
 #   mysql:
