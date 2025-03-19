@@ -1,45 +1,35 @@
+version: '2'
 services:
-  # frontend:
-  #   build: ./frontend
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./frontend:/app
-  #     - /app/node_modules  # Avoid overwriting node_modules
-  #   depends_on:
-  #     - backend
-  #   environment:
-  #     - CHOKIDAR_USEPOLLING=true  # Helps with live reloading in some environments
-
-  backend:
-    build: ./project
+  php:
+    build: php
     ports:
-      - "5000:5000"
+    - "8981:80" # port where webpage will be accessible (8180)
+    - "8943:443"
     volumes:
-      - ./project:/app
+    - ./php/www/:/var/www/html
+    links:
+    - db
+  db:
+    image: mysql:5.7
+    env_file: .env
+    volumes:
+    - /var/lib/mysql
+    - ./mysql:/docker-entrypoint-initdb.d
+    - ./data:/var/lib/mysql-files
     environment:
-      - FLASK_APP=wds-database-app.py
-      - FLASK_DEBUG=1
+    - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    - MYSQL_DATABASE=${MYSQL_DATABASE}
+    ports:
+    - "33061:3306" # maps container's 3306 to host's 33060 (to access via MySql workbench)
 
-#   mysql:
-#     image: mysql:8.0
-#     restart: always
-#     environment:
-#       MYSQL_ROOT_PASSWORD: hunter2
-#       MYSQL_DATABASE: database
-#     volumes:
-#       - mysql-data:/var/lib/mysql
-#     ports:
-#       - "33061:3306"
-  
-#   apache:
-#     image: httpd:latest
-#     container_name: teachmeumb-apache
-#     ports:
-#       - "8080:80"
-#     volumes:
-#       - ./apache/httpd.conf:/usr/local/apache2/conf/httpd.conf  # Make sure the left side is a FILE
-
-volumes:
-  pycache:
-    driver: local
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    env_file: .env
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - PMA_HOST=db
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "8982:80"

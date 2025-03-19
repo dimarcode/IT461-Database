@@ -1,4 +1,5 @@
-﻿1,Barbra,Adkin,4 Kohler Memorial Dr,Boston,MA,02108,718-201-3751,badkin@hotmail.com
+﻿id,first_name,last_name,address,city,state,zip,phone1,email
+1,Barbra,Adkin,4 Kohler Memorial Dr,Boston,MA,02108,718-201-3751,badkin@hotmail.com
 2,Jutta,Amyot,49 N Mays St,Boston,MA,02108,337-515-1438,jamyot@hotmail.com
 3,Helga,Fredicks,42754 S Ash Ave,Boston,MA,02108,716-752-4114,helga_fredicks@yahoo.com
 4,Cyndy,Goldammer,170 Wyoming Ave,Boston,MA,02108,952-334-9408,cgoldammer@cox.net
