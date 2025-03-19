@@ -4,7 +4,7 @@
 .env*.local
 .env
 *.pem
-database
+/mysql/database/*
 
 # Compiled source #
 ###################

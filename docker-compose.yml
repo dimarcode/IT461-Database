@@ -9,6 +9,7 @@ services:
     - ./php/www/:/var/www/html
     links:
     - db
+
   db:
     image: mysql:5.7
     env_file: .env
@@ -22,7 +23,7 @@ services:
     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     - MYSQL_DATABASE=${MYSQL_DATABASE}
     ports:
-    - "33061:3306" # maps container's 3306 to host's 33060 (to access via MySql workbench)
+    - "33061:3306" # maps container's 3306 to host's 33060 (to access via phpmyadmin)
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest

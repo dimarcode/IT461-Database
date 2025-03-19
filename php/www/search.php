@@ -43,6 +43,11 @@ if ($result->num_rows > 0) {
                         <td>{$row['zip']}</td>
                         <td>{$row['phone1']}</td>
                         <td>{$row['email']}</td>
+                        <td>
+                            <a href='start_order.php?user_id={$row['id']}'>
+                                <button>Start Order</button>
+                            </a>
+                        </td>
                     </tr>";
     }
 } else {
