@@ -13,10 +13,12 @@ services:
     image: mysql:5.7
     env_file: .env
     volumes:
-    - /var/lib/mysql
+    - ./mysql/database:/var/lib/mysql
     - ./mysql:/docker-entrypoint-initdb.d
     - ./data:/var/lib/mysql-files
     environment:
+    - PUID=${PUID}
+    - GUID=${GUID}
     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     - MYSQL_DATABASE=${MYSQL_DATABASE}
     ports:

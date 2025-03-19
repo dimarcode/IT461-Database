@@ -1,175 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <header>
-        <img src="cleaners.webp" alt="Dry cleaners logo" style="display: block; margin: auto;">
-        WDS Data Inc. 
-    </header>
-    <title>Navigation Bar</title>
-    <style>
-        /* Basic styling for the navigation bar */
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center; 
-        }
+<?php
+$servername = "db";
+$username = "root";  // Adjust as needed
+$password = "hunter2";      // Adjust as needed
+$database = "mysql"; // Change this to your actual database name
 
-        header {
-            text-align: center;
-            padding: 20px;
-            font-size: 24px;
-        }
+$conn = new mysqli($servername, $username, $password, $database);
 
-        img {
-            width: 200px;
-            height: 300px;
-            object-fit: cover;
-            text-align: center;
-        }
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
-        nav {
-            background-color: #333;
-            overflow: hidden;
-            display: flex;
-            justify-content: center; /* Centers the links horizontally */
-            padding: 10px 0;
-        }
+$search = isset($_POST['query']) ? $_POST['query'] : '';
 
-        nav a {
-            float: left;
-            display: block;
-            color: #f2f2f2;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-        }
+// Use prepared statements to prevent SQL injection
+$sql = "SELECT * FROM data_info_user WHERE 
+        first_name LIKE ? OR 
+        last_name LIKE ? OR 
+        address LIKE ? OR 
+        city LIKE ? OR 
+        state LIKE ? OR 
+        zip LIKE ? OR 
+        phone1 LIKE ? OR 
+        email LIKE ?";
 
-        nav a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-        
-        label {
-            display: inline-block; 
-            width: 100%;
-            text-align:center; 
-            padding: 7px; 
-        }
+$stmt = $conn->prepare($sql);
+$searchTerm = "%$search%";
+$stmt->bind_param("ssssssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
+$stmt->execute();
+$result = $stmt->get_result();
 
-        form {
-            background: white;
-            padding: 20px; 
-            max-width: 300px; 
-            margin: 20px auto; 
-            box-shadow: 0px 0px 10px 0px #aaa;
-            border-radius: 5px;
-        }
+$output = "";
 
-        table {
-            margin: 20px auto; 
-            border-collapse: collapse;
-            width: 80%; 
-            text-align: center; 
-        }
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $output .= "<tr>
+                        <td>{$row['id']}</td>
+                        <td>{$row['first_name']}</td>
+                        <td>{$row['last_name']}</td>
+                        <td>{$row['address']}</td>
+                        <td>{$row['city']}</td>
+                        <td>{$row['state']}</td>
+                        <td>{$row['zip']}</td>
+                        <td>{$row['phone1']}</td>
+                        <td>{$row['email']}</td>
+                    </tr>";
+    }
+} else {
+    $output = "<tr><td colspan='9'>No results found</td></tr>";
+}
 
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center; 
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        /* Responsive styling for smaller screens */
-        @media screen and (max-width: 600px) {
-            nav a {
-                float: none;
-                width: 100%;
-                text-align: left;
-            }
-        }
-    </style>
-</head>
-<body>
-   <nav>
-        <a href="index.html">Home</a>
-        <a href="enter.php">Enter Data</a>
-        <a href="data.php">All Data</a>
-        <a href="search.php">Search</a>
-    </nav>  
-        <?php
-            error_reporting(E_ALL);
-            ini_set('display_errors', 1);
-
-            // Include your database connection
-            // Database connection
-            
-                $db_server = "db";
-                $db_user = "root";
-                $db_pass = "hunter2";
-                $db_name = "mysql";
-
-                $conn = mysqli_connect($db_server, $db_user, $db_pass, $db_name);
-
-            // Default SQL query to get all data
-            $sql = "SELECT * FROM `WDS Customers`";
-
-            // If the form is submitted, adjust the SQL query based on the search criteria
-            if (isset($_POST['submit'])) {
-                $search = mysqli_real_escape_string($conn, $_POST['search']);
-                
-                // Build dynamic SQL query based on user input (search in both first_name and last_name)
-                $sql = "SELECT * FROM `WDS Customers` WHERE 1=1";
-                
-                if (!empty($search)) {
-                    $sql .= " AND (first_name LIKE '%$search%' OR last_name LIKE '%$search%')";
-                }
-            }
-            ?>
-
-            <!-- HTML form for the search -->
-            <form method="POST" action="">
-                <label for="search">Search by First or Last Name</label>
-                <input type="text" name="search" id="search" value="">
-                <br><br>
-
-                <input type="submit" name="submit" value="Search">
-            </form>
-
-            <?php
-                // Run the query and display results
-                $result = mysqli_query($conn, $sql);
-
-                if (mysqli_num_rows($result) > 0) {
-                    // Table headers
-                echo "<table border='1'>";
-                echo "<tr><th>First Name</th><th>Last Name</th><th>Address</th><th>City</th><th>State</th><th>Zip</th><th>Phone 1</th><th>Email</th></tr>";
-                    
-                    // Output results for each row
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        echo "<tr>";
-                        echo "<td>" . $row["first_name"] . "</td>";
-                        echo "<td>" . $row["last_name"] . "</td>";
-                        echo "<td>" . $row["address"] . "</td>";
-                        echo "<td>" . $row["city"] . "</td>";
-                        echo "<td>" . $row["state"] . "</td>";
-                        echo "<td>" . $row["zip"] . "</td>";
-                        echo "<td>" . $row["phone1"] . "</td>";
-                        echo "<td>" . $row["email"] . "</td>";
-                        echo "</tr>";
-                    }
-                    
-                    echo "</table>";
-                } else {
-                    echo "No users found.";
-                }
-
-                // Close the connection
-                mysqli_close($conn);
-                ?>
-</body>
-</html>
+echo $output;
+$stmt->close();
+$conn->close();
+?>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <header>
+        <img src="cleaners.webp" alt="Dry cleaners logo" style="display: block; margin: auto;">
+        WDS Data Inc. 
+    </header>
+    <title>Navigation Bar</title>
+    <style>
+        /* Basic styling for the navigation bar */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center; 
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            font-size: 24px;
+        }
+
+        img {
+            width: 200px;
+            height: 300px;
+            object-fit: cover;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #333;
+            overflow: hidden;
+            display: flex;
+            justify-content: center; /* Centers the links horizontally */
+            padding: 10px 0;
+        }
+
+        nav a {
+            float: left;
+            display: block;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        
+        label {
+            display: inline-block; 
+            width: 100%;
+            text-align:center; 
+            padding: 7px; 
+        }
+
+        form {
+            background: white;
+            padding: 20px; 
+            max-width: 300px; 
+            margin: 20px auto; 
+            box-shadow: 0px 0px 10px 0px #aaa;
+            border-radius: 5px;
+        }
+
+        table {
+            margin: 20px auto; 
+            border-collapse: collapse;
+            width: 80%; 
+            text-align: center; 
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center; 
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Responsive styling for smaller screens */
+        @media screen and (max-width: 600px) {
+            nav a {
+                float: none;
+                width: 100%;
+                text-align: left;
+            }
+        }
+    </style>
+    <title>Live Search</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+   <nav>
+        <a href="index.html">Home</a>
+        <a href="enter.php">Enter Data</a>
+        <a href="data.php">All Data</a>
+        <a href="search.html">Search</a>
+    </nav>  
+        <h2>Search Users</h2>
+    <input type="text" id="search" placeholder="Type to search..." onkeyup="fetchData()">
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Zip</th>
+                <th>Phone</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody id="data-table">
+            <!-- Results will be inserted here -->
+        </tbody>
+    </table>
+    <script>
+        function fetchData() {
+            let searchQuery = document.getElementById("search").value;
+
+            $.ajax({
+                url: "search.php",
+                type: "POST",
+                data: { query: searchQuery },
+                success: function(response) {
+                    $("#data-table").html(response);
+                }
+            });
+        }
+
+        // Load all data initially
+        $(document).ready(function () {
+            fetchData();
+        });
+    </script>
+</html>

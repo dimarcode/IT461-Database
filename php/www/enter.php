@@ -96,7 +96,7 @@
     <a href="index.html">Home</a>
     <a href="enter.php">Enter Data</a>
     <a href="data.php">All Data</a>
-    <a href="search.php">Search</a>
+    <a href="search.html">Search</a>
 </nav>
 <h2>Enter Customer Data</h2>
 
@@ -127,7 +127,7 @@
                 $email = mysqli_real_escape_string($conn, $_POST['email']);
 
                 if (!empty($first_name) && !empty($last_name) && !empty($email)) {
-                    $sql = "INSERT INTO `WDS Customers` (first_name, last_name, address, city, state, zip, phone1, email) 
+                    $sql = "INSERT INTO `data_info_user` (first_name, last_name, address, city, state, zip, phone1, email) 
                             VALUES ('$first_name', '$last_name', '$address', '$city', '$state', '$zip', '$phone1', '$email')";
 
                     if (mysqli_query($conn, $sql)) {

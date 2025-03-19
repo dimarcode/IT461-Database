@@ -83,7 +83,7 @@
         <a href="index.html">Home</a>
         <a href="enter.php">Enter Data</a>
         <a href="data.php">All Data</a>
-        <a href="search.php">Search</a>
+        <a href="search.html">Search</a>
     </nav> 
         <?php
             error_reporting(E_ALL);
@@ -102,8 +102,8 @@
                 die("Could not connect: " . mysqli_connect_error());
             }
 
-            // Correct SQL syntax (assuming "WDS Customers" is a table)
-            $sql = "SELECT * FROM `WDS Customers`";
+            // Correct SQL syntax (assuming "data_info_user" is a table)
+            $sql = "SELECT * FROM `data_info_user`";
             $result = mysqli_query($conn, $sql);
 
             if (mysqli_num_rows($result) > 0) {

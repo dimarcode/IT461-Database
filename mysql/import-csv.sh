@@ -4,6 +4,8 @@ set -e
 # Create table if it doesn't exist
 mysql -u root -p"$MYSQL_ROOT_PASSWORD" $MYSQL_DATABASE <<-'EOSQL'
   
+    DROP TABLE IF EXISTS `data_info_user`;
+
     CREATE TABLE IF NOT EXISTS data_info_user (
         id INT AUTO_INCREMENT PRIMARY KEY,
         first_name VARCHAR(200),
@@ -16,6 +18,8 @@ mysql -u root -p"$MYSQL_ROOT_PASSWORD" $MYSQL_DATABASE <<-'EOSQL'
         email VARCHAR(200)
     );
 
+    DROP TABLE IF EXISTS `order_details`;
+
     CREATE TABLE IF NOT EXISTS order_details (
         id INT AUTO_INCREMENT PRIMARY KEY,
         order_id INT NOT NULL,
@@ -24,6 +28,8 @@ mysql -u root -p"$MYSQL_ROOT_PASSWORD" $MYSQL_DATABASE <<-'EOSQL'
         price DECIMAL(10,2) NOT NULL
     );
 
+    DROP TABLE IF EXISTS `order_list`;
+
     CREATE TABLE IF NOT EXISTS order_list (
         order_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
@@ -31,9 +37,11 @@ mysql -u root -p"$MYSQL_ROOT_PASSWORD" $MYSQL_DATABASE <<-'EOSQL'
         order_date timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
 
+     DROP TABLE IF EXISTS `price_list_product`;
+
     CREATE TABLE IF NOT EXISTS price_list_product (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        items VARCHAR(200) NOT NULL,
+        item_name VARCHAR(200) NOT NULL,
         price VARCHAR(200) NOT NULL
     );
 
