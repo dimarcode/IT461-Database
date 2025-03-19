@@ -1,13 +1,9 @@
 <?php
-$servername = "db";
-$username = "root";  // Adjust as needed
-$password = "hunter2";      // Adjust as needed
-$database = "mysql"; // Change this to your actual database name
 
-$conn = new mysqli($servername, $username, $password, $database);
+include 'connect.php';
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if ($connect->connect_error) {
+    die("Connection failed: " . $connect->connect_error);
 }
 
 $search = isset($_POST['query']) ? $_POST['query'] : '';
@@ -23,7 +19,7 @@ $sql = "SELECT * FROM data_info_user WHERE
         phone1 LIKE ? OR 
         email LIKE ?";
 
-$stmt = $conn->prepare($sql);
+$stmt = $connect->prepare($sql);
 $searchTerm = "%$search%";
 $stmt->bind_param("ssssssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
 $stmt->execute();

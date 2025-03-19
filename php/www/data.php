@@ -84,27 +84,14 @@
         <a href="enter.php">Enter Data</a>
         <a href="data.php">All Data</a>
         <a href="search.html">Search</a>
-    </nav> 
+    </nav>
         <?php
-            error_reporting(E_ALL);
-            ini_set('display_errors', 1);
 
-            // Database connection
-            $db_server = "db";
-            $db_user = "root";
-            $db_pass = "hunter2";
-            $db_name = "mysql";
-
-            $conn = mysqli_connect($db_server, $db_user, $db_pass, $db_name);
-
-            // Check if connection was successful
-            if (!$conn) {
-                die("Could not connect: " . mysqli_connect_error());
-            }
+            include 'connect.php';
 
             // Correct SQL syntax (assuming "data_info_user" is a table)
             $sql = "SELECT * FROM `data_info_user`";
-            $result = mysqli_query($conn, $sql);
+            $result = mysqli_query($connect, $sql);
 
             if (mysqli_num_rows($result) > 0) {
                     // Start table and add headers
@@ -137,7 +124,7 @@
                 echo "No user found";
             }
             // Close connection
-            mysqli_close($conn);
+            mysqli_close($connect);
         ?>
 </body>
 </html>

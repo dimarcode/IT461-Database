@@ -106,25 +106,20 @@
 
         // Database connection
 
-            $db_server = "db";
-            $db_user = "root";
-            $db_pass = "hunter2";
-            $db_name = "mysql";
-
-            $conn = mysqli_connect($db_server, $db_user, $db_pass, $db_name);
+            include 'connect.php';
 
             $success_message = "";
             $error_message = "";
 
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                $first_name = mysqli_real_escape_string($conn, $_POST['first_name']);
-                $last_name = mysqli_real_escape_string($conn, $_POST['last_name']);
-                $address = mysqli_real_escape_string($conn, $_POST['address']);
-                $city = mysqli_real_escape_string($conn, $_POST['city']);
-                $state = mysqli_real_escape_string($conn, $_POST['state']);
-                $zip = mysqli_real_escape_string($conn, $_POST['zip']);
-                $phone1 = mysqli_real_escape_string($conn, $_POST['phone1']);
-                $email = mysqli_real_escape_string($conn, $_POST['email']);
+                $first_name = mysqli_real_escape_string($connect, $_POST['first_name']);
+                $last_name = mysqli_real_escape_string($connect, $_POST['last_name']);
+                $address = mysqli_real_escape_string($connect, $_POST['address']);
+                $city = mysqli_real_escape_string($connect, $_POST['city']);
+                $state = mysqli_real_escape_string($connect, $_POST['state']);
+                $zip = mysqli_real_escape_string($connect, $_POST['zip']);
+                $phone1 = mysqli_real_escape_string($connect, $_POST['phone1']);
+                $email = mysqli_real_escape_string($connect, $_POST['email']);
 
                 if (!empty($first_name) && !empty($last_name) && !empty($email)) {
                     $sql = "INSERT INTO `data_info_user` (first_name, last_name, address, city, state, zip, phone1, email) 
@@ -139,7 +134,7 @@
                     $error_message = "First Name, Last Name, and Email are required.";
                 }
             }
-        mysqli_close($conn);
+        mysqli_close($connect);
     ?>
 
 <!-- Form -->

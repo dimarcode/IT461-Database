@@ -3,8 +3,11 @@
 *.env.local
 .env*.local
 .env
+connect.php
+
+# Keys #
+########
 *.pem
-/mysql/database/*
 
 # Compiled source #
 ###################
@@ -33,6 +36,7 @@
 *.log
 *.sql
 *.sqlite
+/mysql/database/*
 
 # OS generated files #
 ######################
