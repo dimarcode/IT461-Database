@@ -52,5 +52,5 @@ if ($result->num_rows > 0) {
 
 echo $output;
 $stmt->close();
-$conn->close();
+$connect->close();
 ?>
