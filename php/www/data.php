@@ -1,130 +1,104 @@
+<?php
+include 'connect.php'; 
+
+$sql = "SELECT * FROM customers";
+$result = mysqli_query($conn, $sql);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <header>
-        <img src="cleaners.webp" alt="Dry cleaners logo" style="display: block; margin: auto;">
-        WDS Data Inc.
-    </header>
-    <title>Navigation Bar</title>
-    <style>
-        /* Basic styling for the navigation bar */
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-
-        img {
-            width: 200px;
-            height: 300px;
-            object-fit: cover;
-            text-align: center;
-        }
-
-        header {
-            text-align: center;
-            padding: 20px;
-            font-size: 24px;
-        }
-
-        nav {
-            background-color: #333;
-            overflow: hidden;
-            display: flex;
-            justify-content: center; 
-            padding: 10px 0;
-        }
-
-        nav a {
-            float: left;
-            display: block;
-            color: #f2f2f2;
-            text-align: center;
-            padding: 14px 20px;
-            text-decoration: none;
-        }
-
-        nav a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-
-        table {
-            margin: 20px auto; 
-            border-collapse: collapse;
-            width: 80%; 
-            text-align: center; 
-        }
-
-        th, td {
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: center;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        /* Responsive styling for smaller screens */
-        @media screen and (max-width: 600px) {
-            nav a {
-                float: none;
-                width: 100%;
-                text-align: left;
-            }
-        }
-    </style>
+    <title>All Customers - WDS Data</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-   <nav>
-        <a href="index.html">Home</a>
-        <a href="enter.php">Enter Data</a>
-        <a href="data.php">All Data</a>
-        <a href="search.html">Search</a>
-    </nav>
-        <?php
 
-            include 'connect.php';
+<header>
+    <h1>WDS Data Inc.</h1>
+</header>
 
-            // Correct SQL syntax (assuming "customers" is a table)
-            $sql = "SELECT * FROM `customers`";
-            $result = mysqli_query($connect, $sql);
+<nav>
+    <a href="index.php">Home</a>
+    <a href="customers.php">Customers</a>
+    <a href="orders.php">Search Orders</a>
+    <div class="dropdown">
+        <button class="dropbtn">All Data ▼</button>
+        <div class="dropdown-content">
+            <a href="data.php">All Customers</a>
+            <a href="receipts.php">All Receipts</a> 
+        </div>
+    </div>
+</nav>
 
-            if (mysqli_num_rows($result) > 0) {
-                    // Start table and add headers
-                    echo "<table border='1'>";
-                    echo "<tr>";
-                    echo "<th>First Name</th>";
-                    echo "<th>Last Name</th>";
-                    echo "<th>Address</th>";
-                    echo "<th>City</th>";
-                    echo "<th>State</th>";
-                    echo "<th>Zip</th>";
-                    echo "<th>Phone 1</th>";
-                    echo "<th>Email</th>";
-                    echo "</tr>";
-                    
-                    // Loop through each row and output data in one row per entry
-                while ($row = mysqli_fetch_assoc($result)) {
-                    echo "<tr>";
-                    echo "<td>" . $row["first_name"] . "</td>";
-                    echo "<td>" . $row["last_name"] . "</td>";
-                    echo "<td>" . $row["address"] . "</td>";
-                    echo "<td>" . $row["city"] . "</td>";
-                    echo "<td>" . $row["state"] . "</td>";
-                    echo "<td>" . $row["zip"] . "</td>";
-                    echo "<td>" . $row["phone1"] . "</td>";
-                    echo "<td>" . $row["email"] . "</td>";
-                    echo "</tr>";
-                }
-            } else {
-                echo "No user found";
-            }
-            // Close connection
-            mysqli_close($connect);
-        ?>
+<style>
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .dropbtn {
+        background-color:#007bff;
+        color: white;
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+    
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+    
+    .dropdown-content a:hover {
+        background-color: #ddd;
+    }
+    
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+</style>
+
+
+<h2>All Customers</h2>
+
+<table>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Address</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zip</th>
+        <th>Phone</th>
+        <th>Email</th>
+    </tr>
+
+    <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+        <tr>
+            <td><?= $row["first_name"] ?></td>
+            <td><?= $row["last_name"] ?></td>
+            <td><?= $row["address"] ?></td>
+            <td><?= $row["city"] ?></td>
+            <td><?= $row["state"] ?></td>
+            <td><?= $row["zip"] ?></td>
+            <td><?= $row["phone1"] ?></td>
+            <td><?= $row["email"] ?></td>
+        </tr>
+    <?php } ?>
+</table>
+
 </body>
 </html>

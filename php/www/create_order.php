@@ -9,7 +9,7 @@ $customer_id = isset($_GET['customer_id']) ? intval($_GET['customer_id']) : null
 $customer_name = "";
 if ($customer_id) {
     $query = "SELECT first_name, last_name, address, city, state, zip, phone1, email FROM customers WHERE id = ?";
-    $stmt = $connect->prepare($query);
+    $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $customer_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -31,11 +31,11 @@ $current_date = date("m/d/Y");
 
 // Query the price list to get item IDs, names, and prices
 $query = "SELECT id, item_name, price FROM items";
-$result = mysqli_query($connect, $query);
+$result = mysqli_query($conn, $query);
 
 // Check if query was successful
 if (!$result) {
-    echo "Database query failed: " . mysqli_error($connect);
+    echo "Database query failed: " . mysqli_error($conn);
     exit;
 }
 
@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     
                     // Get the item price from database to ensure accuracy
                     $price_query = "SELECT price FROM items WHERE id = ?";
-                    $stmt = $connect->prepare($price_query);
+                    $stmt = $conn->prepare($price_query);
                     $stmt->bind_param("i", $item_id);
                     $stmt->execute();
                     $price_result = $stmt->get_result();
@@ -106,21 +106,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $grand_total = $total_price + ($total_price * $tax_rate);
             
             // Begin transaction
-            $connect->begin_transaction();
+            $conn->begin_transaction();
             
             try {
                 // Insert into order_list
                 $order_insert = "INSERT INTO order_list (customer_id, total_price, pickup_date) VALUES (?, ?, ?)";
-                $stmt = $connect->prepare($order_insert);
+                $stmt = $conn->prepare($order_insert);
                 $stmt->bind_param("ids", $customer_id, $grand_total, $formatted_pickup_date);
                 $stmt->execute();
                 
                 // Get the new order ID
-                $order_id = $connect->insert_id;
+                $order_id = $conn->insert_id;
                 
                 // Insert items into order_details
                 $detail_insert = "INSERT INTO order_details (order_id, item_id, quantity, price) VALUES (?, ?, ?, ?)";
-                $stmt = $connect->prepare($detail_insert);
+                $stmt = $conn->prepare($detail_insert);
                 
                 foreach ($valid_items as $item) {
                     $item_total = $item['price'] * $item['quantity'];
@@ -129,12 +129,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
                 
                 // Commit transaction
-                $connect->commit();
+                $conn->commit();
                 $order_success = true;
                 
             } catch (Exception $e) {
                 // Roll back transaction on error
-                $connect->rollback();
+                $conn->rollback();
                 $order_error = "Order failed: " . $e->getMessage();
             }
         }

@@ -1,9 +1,8 @@
 <?php
-
 include 'connect.php';
 
-if ($connect->connect_error) {
-    die("Connection failed: " . $connect->connect_error);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
 $search = isset($_POST['query']) ? $_POST['query'] : '';
@@ -20,7 +19,7 @@ $sql = "SELECT * FROM customers WHERE
         email LIKE ?
         ORDER BY last_name";
 
-$stmt = $connect->prepare($sql);
+$stmt = $conn->prepare($sql);
 $searchTerm = "%$search%";
 $stmt->bind_param("ssssssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
 $stmt->execute();
@@ -41,9 +40,7 @@ if ($result->num_rows > 0) {
                         <td>" . htmlspecialchars($row['phone1']) . "</td>
                         <td>" . htmlspecialchars($row['email']) . "</td>
                         <td>
-                            <a href='create_order.php?customer_id=" . urlencode($row['id']) . "'>
-                                <button>Start Order</button>
-                            </a>
+                            <button onclick='openOrderModal(" . $row['id'] . ")'>Start Order</button>
                         </td>
                     </tr>";
     }
@@ -53,5 +50,5 @@ if ($result->num_rows > 0) {
 
 echo $output;
 $stmt->close();
-$connect->close();
+$conn->close();
 ?>
