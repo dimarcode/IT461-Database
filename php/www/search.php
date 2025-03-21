@@ -8,8 +8,8 @@ if ($connect->connect_error) {
 
 $search = isset($_POST['query']) ? $_POST['query'] : '';
 
-// Use prepared statements to prevent SQL injection
-$sql = "SELECT * FROM data_info_user WHERE 
+// Prepared statements to prevent SQL injection
+$sql = "SELECT * FROM customers WHERE 
         first_name LIKE ? OR 
         last_name LIKE ? OR 
         address LIKE ? OR 
@@ -17,7 +17,8 @@ $sql = "SELECT * FROM data_info_user WHERE
         state LIKE ? OR 
         zip LIKE ? OR 
         phone1 LIKE ? OR 
-        email LIKE ?";
+        email LIKE ?
+        ORDER BY last_name";
 
 $stmt = $connect->prepare($sql);
 $searchTerm = "%$search%";
@@ -28,26 +29,26 @@ $result = $stmt->get_result();
 $output = "";
 
 if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
+    while ($row = mysqli_fetch_assoc($result)) {
         $output .= "<tr>
                         <td>{$row['id']}</td>
-                        <td>{$row['first_name']}</td>
-                        <td>{$row['last_name']}</td>
-                        <td>{$row['address']}</td>
-                        <td>{$row['city']}</td>
-                        <td>{$row['state']}</td>
-                        <td>{$row['zip']}</td>
-                        <td>{$row['phone1']}</td>
-                        <td>{$row['email']}</td>
+                        <td>" . htmlspecialchars($row['first_name']) . "</td>
+                        <td>" . htmlspecialchars($row['last_name']) . "</td>
+                        <td>" . htmlspecialchars($row['address']) . "</td>
+                        <td>" . htmlspecialchars($row['city']) . "</td>
+                        <td>" . htmlspecialchars($row['state']) . "</td>
+                        <td>" . htmlspecialchars($row['zip']) . "</td>
+                        <td>" . htmlspecialchars($row['phone1']) . "</td>
+                        <td>" . htmlspecialchars($row['email']) . "</td>
                         <td>
-                            <a href='start_order.php?user_id={$row['id']}'>
+                            <a href='create_order.php?customer_id=" . urlencode($row['id']) . "'>
                                 <button>Start Order</button>
                             </a>
                         </td>
                     </tr>";
     }
 } else {
-    $output = "<tr><td colspan='9'>No results found</td></tr>";
+    $output = "<tr><td colspan='10'>No results found</td></tr>";
 }
 
 echo $output;

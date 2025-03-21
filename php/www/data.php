@@ -89,8 +89,8 @@
 
             include 'connect.php';
 
-            // Correct SQL syntax (assuming "data_info_user" is a table)
-            $sql = "SELECT * FROM `data_info_user`";
+            // Correct SQL syntax (assuming "customers" is a table)
+            $sql = "SELECT * FROM `customers`";
             $result = mysqli_query($connect, $sql);
 
             if (mysqli_num_rows($result) > 0) {

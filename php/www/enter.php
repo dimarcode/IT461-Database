@@ -122,10 +122,10 @@
                 $email = mysqli_real_escape_string($connect, $_POST['email']);
 
                 if (!empty($first_name) && !empty($last_name) && !empty($email)) {
-                    $sql = "INSERT INTO `data_info_user` (first_name, last_name, address, city, state, zip, phone1, email) 
+                    $sql = "INSERT INTO `customers` (first_name, last_name, address, city, state, zip, phone1, email) 
                             VALUES ('$first_name', '$last_name', '$address', '$city', '$state', '$zip', '$phone1', '$email')";
 
-                    if (mysqli_query($conn, $sql)) {
+                    if (mysqli_query($connect, $sql)) {
                         $success_message = "Data successfully entered!";
                     } else {
                         $error_message = "Error: " . mysqli_error($conn);
