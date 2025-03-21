@@ -38,9 +38,6 @@ if ($result->num_rows > 0) {
                         <td>" . htmlspecialchars($row['total_price']) . "</td>
                         <td>" . htmlspecialchars($row['order_date']) . "</td>
                         <td>" . htmlspecialchars($row['pickup_date']) . "</td>
-                        <td>
-                            <button onclick='openOrderModal(" . $row['order_id'] . ")'>Print Receipt</button>
-                        </td>
                     </tr>";
     }
 } else {
