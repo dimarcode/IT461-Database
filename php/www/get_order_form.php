@@ -189,5 +189,10 @@ $(document).ready(function() {
             }
         });
     });
+      $("#datepicker").datepicker({
+          dateFormat: "mm/dd/yy",
+          minDate: 0 // This restricts to current date and future
+      });
 });
+
 </script>

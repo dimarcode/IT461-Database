@@ -4,14 +4,6 @@
     <meta charset="UTF-8">
     <title>Customers - WDS Data</title>
     <link rel="stylesheet" href="styles.css">
-    <script>
-        function openModal() {
-            document.getElementById("customerModal").style.display = "block";
-        }
-        function closeModal() {
-            document.getElementById("customerModal").style.display = "none";
-        }
-    </script>
     <style>
         /* Modal Styles */
         .modal {
@@ -40,8 +32,8 @@
         }
     </style>
     <title>Live Search</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 </head>
 <body>
@@ -62,7 +54,7 @@
 </form>
 
 <!-- Add Customer Button -->
-<button onclick="openModal()">Add Customer</button>
+<button onclick="openCustomerModal()">Add Customer</button>
 
 <!-- Modal (Add Customer Form) -->
 <div id="customerModal" class="modal">
@@ -103,82 +95,91 @@
 </table>
 
     <!-- Order Modal -->
-    <div id="orderModal" class="modal">
-        <!-- Modal content -->
-        <div class="modal-content">
-            
-            <div id="modal-body">
-                <!-- Order form will be loaded here -->
-            </div>
+<div id="orderModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="modal-body">
+            <!-- Order form will be loaded here -->
         </div>
     </div>
+</div>
 
-</body>
-    <script>
-        function fetchData() {
-            let searchQuery = document.getElementById("search").value;
-
-            $.ajax({
-                url: "search_customers.php",
-                type: "POST",
-                data: { query: searchQuery },
-                success: function(response) {
-                    $("#data-table").html(response);
-                }
-            });
+<script>
+    // Universal modal functions that work with any modal
+    function openModalById(modalId) {
+        document.getElementById(modalId).style.display = "block";
+    }
+    
+    function closeAllModals() {
+        var modals = document.getElementsByClassName("modal");
+        for (var i = 0; i < modals.length; i++) {
+            modals[i].style.display = "none";
         }
-
-        // Load all data initially
-        $(document).ready(function () {
-            fetchData();
-        });
-
-        // Modal functionality
-        var modal = document.getElementById("orderModal");
-        var span = document.getElementsByClassName("close")[0];
-
-        // Function to open modal and load order form
-        function openOrderModal(customerId) {
-            // Load order form via AJAX
-            $.ajax({
-                url: "get_order_form.php",
-                type: "GET",
-                data: { customer_id: customerId },
-                success: function(response) {
-                    $("#modal-body").html(response);
-                    modal.style.display = "block";
-                    
-                    // Initialize datepicker and other form elements
-                    initializeOrderForm();
-                },
-                error: function(xhr, status, error) {
-                    alert("Error loading order form: " + error);
-                }
-            });
-        }
-
-        // Close modal when clicking the × button
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        // Close modal when clicking outside of it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
+    }
+    
+    // Function to open the customer modal
+    function openCustomerModal() {
+        openModalById("customerModal");
+    }
+    
+    // Function to open order modal and load order form
+    function openOrderModal(customerId) {
+        // Load order form via AJAX
+        $.ajax({
+            url: "get_order_form.php",
+            type: "GET",
+            data: { customer_id: customerId },
+            success: function(response) {
+                $("#modal-body").html(response);
+                openModalById("orderModal");
+                
+                // Initialize datepicker
+                $("#datepicker").datepicker({
+                    dateFormat: "mm/dd/yy",
+                    minDate: 0
+                });
+            },
+            error: function(xhr, status, error) {
+                alert("Error loading order form: " + error);
             }
+        });
+    }
+    
+    // When the page loads, set up event handlers
+    document.addEventListener("DOMContentLoaded", function() {
+        // Set up click handlers for all close buttons
+        var closeButtons = document.getElementsByClassName("close");
+        for (var i = 0; i < closeButtons.length; i++) {
+            closeButtons[i].addEventListener("click", closeAllModals);
         }
+        
+        // Close modal when clicking outside the content
+        window.addEventListener("click", function(event) {
+            if (event.target.classList.contains("modal")) {
+                closeAllModals();
+            }
+        });
+    });
+    
+    // Keep your fetchData function
+    function fetchData() {
+        let searchQuery = document.getElementById("search").value;
 
-        // Function to initialize form elements after loading
-        function initializeOrderForm() {
-            // Initialize datepicker
-            $("#datepicker").datepicker({ 
-                minDate: 0, 
-                maxDate: "+31D",
-                dateFormat: "mm/dd/yy" 
-            });
-        }
+        $.ajax({
+            url: "search_customers.php",
+            type: "POST",
+            data: { query: searchQuery },
+            success: function(response) {
+                $("#data-table").html(response);
+            }
+        });
+    }
 
+    // Load all data initially
+    $(document).ready(function () {
+        fetchData();
+    });
     </script>
-
+</body>
 </html>
