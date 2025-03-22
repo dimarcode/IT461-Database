@@ -6,10 +6,10 @@
     <link rel="stylesheet" href="styles.css">
     <script>
         function openModal() {
-            document.getElementById("Modal").style.display = "block";
+            document.getElementById("customerModal").style.display = "block";
         }
         function closeModal() {
-            document.getElementById("Modal").style.display = "none";
+            document.getElementById("customerModal").style.display = "none";
         }
     </script>
     <style>
@@ -53,8 +53,7 @@
 <nav>
     <a href="index.php">Home</a>
     <a href="customers.php">Customers</a>
-    <a href="orders.php">Search Orders</a>
-    <a href="data.php">All Data</a>
+    <a href="orders.php">Orders</a>
 </nav>
 
 <!-- Search Form -->
