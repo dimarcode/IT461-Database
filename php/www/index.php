@@ -18,7 +18,6 @@
     <a href="index.php">Home</a>
     <a href="customers.php">Customers</a>
     <a href="orders.php">Orders</a>
-    <a href="data.php">All Data</a>
 </nav>
 
 <h2>Welcome to WDS Data!</h2>
