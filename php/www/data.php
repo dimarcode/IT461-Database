@@ -22,13 +22,6 @@ $result = mysqli_query($conn, $sql);
     <a href="index.php">Home</a>
     <a href="customers.php">Customers</a>
     <a href="orders.php">Search Orders</a>
-    <div class="dropdown">
-        <button class="dropbtn">All Data ▼</button>
-        <div class="dropdown-content">
-            <a href="data.php">All Customers</a>
-            <a href="receipts.php">All Receipts</a> 
-        </div>
-    </div>
 </nav>
 
 <style>
