@@ -2,6 +2,7 @@
 # IT461-Database
 
 ### Database project for IT461 - Systems Analysis and Design
+---
 
 Ports:
 
@@ -14,6 +15,8 @@ Ports:
 >[!important] Double check that these do not conflict with anything you are already running
 
 #### Directions:
+---
+
 - To set up locally:
 	- Proceed directly to step 2 if you are not running in Docker
 1. If running in **Docker**:
