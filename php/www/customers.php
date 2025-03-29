@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <title>Customers - WDS Data</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <style>
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -30,11 +32,11 @@
             font-size: 28px;
             cursor: pointer;
         }
+        .ui-datepicker {
+            z-index: 999999 !important;
+            position: absolute !important;
+        }
     </style>
-    <title>Live Search</title>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 </head>
 <body>
 
@@ -48,21 +50,18 @@
     <a href="orders.php">Orders</a>
 </nav>
 
-<!-- Search Form -->
 <form method="POST">
     <input type="text" id="search" placeholder="Type to search..." onkeyup="fetchData()">
 </form>
 
-<!-- Add Customer Button -->
 <button onclick="openCustomerModal()">Add Customer</button>
 
-<!-- Modal (Add Customer Form) -->
 <div id="customerModal" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close" onclick="closeAllModals()">&times;</span>
         <h2>Add New Customer</h2>
         <form method="POST" action="process_customer.php">
-            <input type="text" name="first_name" placeholder="First Name" required>
+            <input type="text" id="first_name_autocomplete" name="first_name" placeholder="First Name" required autocomplete="off">
             <input type="text" name="last_name" placeholder="Last Name" required>
             <input type="text" name="address" placeholder="Address" required>
             <input type="text" name="city" placeholder="City" required>
@@ -75,7 +74,6 @@
     </div>
 </div>
 
-<!-- Customer List Table -->
 <table>
     <tr>
         <th>ID</th>
@@ -89,97 +87,152 @@
         <th>Email</th>
         <th>Action</th>
     </tr>
-        <tbody id="data-table">
-            <!-- Results will be inserted here -->
-        </tbody>
+    <tbody id="data-table"></tbody>
 </table>
 
-    <!-- Order Modal -->
 <div id="orderModal" class="modal">
-    <!-- Modal content -->
     <div class="modal-content">
-        <span class="close">&times;</span>
-        <div id="modal-body">
-            <!-- Order form will be loaded here -->
-        </div>
+        <span class="close" onclick="closeAllModals()">&times;</span>
+        <div id="modal-body"></div>
+        <button onclick="openNewItemModal()">+ Add New Item</button>
+    </div>
+</div>
+
+<div id="newItemModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeNewItemModal()">&times;</span>
+        <h2>Add New Item</h2>
+        <input type="text" id="new_item_name" placeholder="Item Name">
+        <input type="number" id="new_item_price" placeholder="Item Price" step="0.01">
+        <button onclick="saveNewItem()">Save</button>
     </div>
 </div>
 
 <script>
-    // Universal modal functions that work with any modal
-    function openModalById(modalId) {
-        document.getElementById(modalId).style.display = "block";
+function openModalById(modalId) {
+    document.getElementById(modalId).style.display = "block";
+}
+
+function closeAllModals() {
+    var modals = document.getElementsByClassName("modal");
+    for (var i = 0; i < modals.length; i++) {
+        modals[i].style.display = "none";
     }
-    
-    function closeAllModals() {
-        var modals = document.getElementsByClassName("modal");
-        for (var i = 0; i < modals.length; i++) {
-            modals[i].style.display = "none";
+}
+
+function openCustomerModal() {
+    openModalById("customerModal");
+}
+
+function openOrderModal(customerId) {
+    $.ajax({
+        url: "get_order_form.php",
+        type: "GET",
+        data: { customer_id: customerId },
+        success: function(response) {
+            $("#modal-body").html(response);
+            openModalById("orderModal");
+
+            // Wait until modal is actually visible before initializing
+            setTimeout(function () {
+                const $dateInput = $("#pickup_date");
+
+                if ($dateInput.length) {
+                    $dateInput.datepicker("destroy"); // just in case
+                    $dateInput.datepicker({
+                        dateFormat: "yy-mm-dd",
+                        minDate: 0,
+                        showAnim: "fadeIn",
+                        beforeShow: function(input, inst) {
+                            // Force reposition on show
+                            setTimeout(function () {
+                                inst.dpDiv.css({
+                                    top: $(input).offset().top + input.offsetHeight,
+                                    left: $(input).offset().left
+                                });
+                            }, 0);
+                        }
+                    });
+                }
+            }, 300); 
+        },
+        error: function(xhr, status, error) {
+            alert("Error loading order form: " + error);
         }
+    });
+}
+
+
+function openNewItemModal() {
+    document.getElementById("newItemModal").style.display = "block";
+}
+
+function closeNewItemModal() {
+    document.getElementById("newItemModal").style.display = "none";
+}
+
+function saveNewItem() {
+    const name = document.getElementById("new_item_name").value;
+    const price = document.getElementById("new_item_price").value;
+
+    if (!name || !price) {
+        return alert("Please enter both item name and price.");
     }
-    
-    // Function to open the customer modal
-    function openCustomerModal() {
-        openModalById("customerModal");
-    }
-    
-    // Function to open order modal and load order form
-    function openOrderModal(customerId) {
-        // Load order form via AJAX
-        $.ajax({
-            url: "get_order_form.php",
-            type: "GET",
-            data: { customer_id: customerId },
-            success: function(response) {
-                $("#modal-body").html(response);
-                openModalById("orderModal");
-                
-                // Initialize datepicker
-                $("#datepicker").datepicker({
-                    dateFormat: "mm/dd/yy",
-                    minDate: 0
+
+    $.post("add_list.php", { items: name, price: price }, function(response) {
+        if (response === "success") {
+            alert("Item added successfully!");
+            closeNewItemModal();
+
+            if ($("#item_select").length) {
+                $.get("fetch_items.php", function(data) {
+                    $("#item_select").html(data);
                 });
-            },
-            error: function(xhr, status, error) {
-                alert("Error loading order form: " + error);
             }
-        });
-    }
-    
-    // When the page loads, set up event handlers
-    document.addEventListener("DOMContentLoaded", function() {
-        // Set up click handlers for all close buttons
-        var closeButtons = document.getElementsByClassName("close");
-        for (var i = 0; i < closeButtons.length; i++) {
-            closeButtons[i].addEventListener("click", closeAllModals);
+        } else if (response === "exists") {
+            alert("Item already exists.");
+        } else {
+            alert("Failed to add item.");
         }
-        
-        // Close modal when clicking outside the content
-        window.addEventListener("click", function(event) {
-            if (event.target.classList.contains("modal")) {
-                closeAllModals();
-            }
-        });
     });
-    
-    // Keep your fetchData function
-    function fetchData() {
-        let searchQuery = document.getElementById("search").value;
+}
 
-        $.ajax({
-            url: "search_customers.php",
-            type: "POST",
-            data: { query: searchQuery },
-            success: function(response) {
-                $("#data-table").html(response);
-            }
-        });
+function fetchData() {
+    let searchQuery = document.getElementById("search").value;
+
+    $.ajax({
+        url: "search_customers.php",
+        type: "POST",
+        data: { query: searchQuery },
+        success: function(response) {
+            $("#data-table").html(response);
+        }
+    });
+}
+
+$(document).ready(function () {
+    fetchData();
+
+    var closeButtons = document.getElementsByClassName("close");
+    for (var i = 0; i < closeButtons.length; i++) {
+        closeButtons[i].addEventListener("click", closeAllModals);
     }
 
-    // Load all data initially
-    $(document).ready(function () {
-        fetchData();
+    window.addEventListener("click", function(event) {
+        if (event.target.classList.contains("modal")) {
+            closeAllModals();
+        }
     });
-    </script>
+
+    $("#first_name_autocomplete").autocomplete({
+        source: 'autocomplete_customers.php'
+    });
+    $(document).on("focus", "#pickup_date", function() {
+    $(this).datepicker("show");
+});
+
+});
+</script>
+
 </body>
 </html>

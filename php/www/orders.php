@@ -2,22 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>All Receipts - WDS Data</title>
+    <title>Orders - WDS Data</title>
     <link rel="stylesheet" href="styles.css">
-    <script>
-        function openModal() {
-            document.getElementById("Modal").style.display = "block";
-        }
-        function closeModal() {
-            document.getElementById("Modal").style.display = "none";
-        }
-    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <style>
-        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 1000;
             left: 0;
             top: 0;
             width: 100%;
@@ -26,60 +20,27 @@
         }
         .modal-content {
             background-color: white;
-            margin: 10% auto;
+            margin: 5% auto;
             padding: 20px;
-            width: 50%;
+            width: 60%;
+            max-height: 80vh;
+            overflow-y: auto;
             border-radius: 10px;
-            text-align: center;
+            position: relative;
         }
         .close {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 20px;
+            cursor: pointer;
             color: red;
-            float: right;
-            font-size: 28px;
+        }
+        tr:hover {
+            background-color: #f0f0f0;
             cursor: pointer;
         }
-        .dropdown {
-        position: relative;
-        display: inline-block;
-    }
-    
-    .dropbtn {
-        background-color:#007bff;
-        color: white;
-        padding: 10px;
-        font-size: 16px;
-        border: none;
-        cursor: pointer;
-    }
-    
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: white;
-        min-width: 160px;
-        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-    }
-    
-    .dropdown-content a {
-        color: black;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-    }
-    
-    .dropdown-content a:hover {
-        background-color: #ddd;
-    }
-    
-    .dropdown:hover .dropdown-content {
-        display: block;
-    }
     </style>
-    <title>Live Search</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
 </head>
 <body>
 
@@ -96,26 +57,33 @@
 <!-- Search Form -->
 <form method="POST">
     <input type="text" id="search" onkeyup="fetchData()" placeholder="Search orders...">
-
 </form>
+
+<!-- Orders Table -->
 <table>
-        <tr>
-            <th>Order ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Total Price</th>
-            <th>Order Date</th>
-            <th>Pickup Date</th>
-        </tr>
+    <tr>
+        <th>Order ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Total Price</th>
+        <th>Order Date</th>
+        <th>Pickup Date</th>
+    </tr>
     <tbody id="data-table">
-        <!-- This is where search_orders.php will insert the rows -->
+        <!-- Filled by AJAX from search_orders.php -->
     </tbody>
 </table>
 
+<!-- Receipt Modal -->
+<div id="receiptModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeReceiptModal()">&times;</span>
+        <div id="receiptContent"></div>
+    </div>
+</div>
 
-</body>
-    <script>
-        function fetchData() {
+<script>
+function fetchData() {
     let searchQuery = document.getElementById("search").value;
 
     $.ajax({
@@ -123,7 +91,6 @@
         type: "POST",
         data: { query: searchQuery },
         success: function(response) {
-            console.log("AJAX Response:", response);  // Debugging
             $("#data-table").html(response);
         },
         error: function(xhr, status, error) {
@@ -132,10 +99,24 @@
     });
 }
 
+function openReceipt(orderId) {
+    fetch('fetch_receipt.php?order_id=' + orderId)
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("receiptContent").innerHTML = data;
+            document.getElementById("receiptModal").style.display = "block";
+        });
+}
 
-// Load all data initially
+function closeReceiptModal() {
+    document.getElementById("receiptModal").style.display = "none";
+}
+
+// Load data on first page load
 $(document).ready(function () {
     fetchData();
 });
-    </script>
+</script>
+
+</body>
 </html>

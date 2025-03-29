@@ -20,10 +20,9 @@ $sql = "SELECT order_list.order_id, customers.first_name, customers.last_name,
               order_list.pickup_date LIKE ?
         ORDER BY order_list.order_date DESC";
 
-
 $stmt = $conn->prepare($sql);
 $searchTerm = "%$search%";
-$stmt->bind_param("ssssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm );
+$stmt->bind_param("ssssss", $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm, $searchTerm);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -31,17 +30,18 @@ $output = "";
 
 if ($result->num_rows > 0) {
     while ($row = mysqli_fetch_assoc($result)) {
-        $output .= "<tr>
+        $orderId = $row['order_id'];
+        $output .= "<tr onclick=\"openReceipt($orderId)\">
                         <td>{$row['order_id']}</td>
                         <td>" . htmlspecialchars($row['first_name']) . "</td>
                         <td>" . htmlspecialchars($row['last_name']) . "</td>
-                        <td>" . htmlspecialchars($row['total_price']) . "</td>
+                        <td>$" . number_format($row['total_price'], 2) . "</td>
                         <td>" . htmlspecialchars($row['order_date']) . "</td>
                         <td>" . htmlspecialchars($row['pickup_date']) . "</td>
                     </tr>";
     }
 } else {
-    $output = "<tr><td colspan='5'>No results found</td></tr>";
+    $output = "<tr><td colspan='6'>No results found</td></tr>";
 }
 
 echo $output;

@@ -60,7 +60,7 @@ while ($row = mysqli_fetch_assoc($result)) {
   
 <form id="orderForm" method="post">
     <input type="hidden" name="customer_id" value="<?php echo $customer_id; ?>">
-    <h3>Pickup date: <input type="text" id="datepicker" name="pickup_date" required></h3>
+    <h3>Pickup date: <input type="text" id="pickup_date" name="pickup_date" required autocomplete="off"></h3>
     <h2>Items:</h2>
     
     <div id="orderFields">
