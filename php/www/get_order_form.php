@@ -73,11 +73,12 @@ while ($row = mysqli_fetch_assoc($result)) {
         <input type="number" name="quantity[]" min="1" value="1" onchange="updatePrice(this.parentNode.querySelector('select'), true)">
         <span class="total-label">Total:</span>
         <span class="total-price">$0.00</span>
+        <button type="button" class="remove-item-btn" onclick="removeField(this)">Remove</button>
       </div>
     </div>
 
     <!-- Button to add additional dropdowns -->
-    <button type="button" onclick="addField()">Add Another</button>
+    <button type="button" onclick="addField()" class="order-modal-add-btn" >Add Another</button>
     <br><br>
 
     <!-- Subtotal and Grand Total -->
@@ -85,7 +86,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     <h3>Grand Total (incl. tax): <span id="grandTotal">$0.00</span></h3>
     <input type="hidden" name="subtotal_amount" id="subtotal_amount" value="0.00">
     <input type="hidden" name="grandtotal_amount" id="grandtotal_amount" value="0.00">
-    <input type="submit" value="Submit Order">
+    <input type="submit" value="Submit Order" class="order-modal-submit-btn">
 </form>
 
 <script>
@@ -162,16 +163,29 @@ function addField() {
   var totalPrice = document.createElement("span");
   totalPrice.className = "total-price";
   totalPrice.textContent = "$0.00";
-  
+
+  var removeBtn = document.createElement("button");
+  removeBtn.type = "button";
+  removeBtn.className = "remove-item-btn";
+  removeBtn.textContent = "Remove";
+  removeBtn.onclick = function() { removeField(this); };
+
   newDiv.appendChild(newSelect);
   newDiv.appendChild(quantityLabel);
   newDiv.appendChild(quantityInput);
   newDiv.appendChild(totalLabel);
   newDiv.appendChild(totalPrice);
+  newDiv.appendChild(removeBtn);
   document.getElementById("orderFields").appendChild(newDiv);
 }
 
+function removeField(btn) {
+  var row = btn.closest('.order-field');
+  row.parentNode.removeChild(row);
+  updateTotal();
+}
 // Form submission
+// ...existing code...
 $(document).ready(function() {
     $("#orderForm").submit(function(e) {
         e.preventDefault();
@@ -181,18 +195,24 @@ $(document).ready(function() {
             type: "POST",
             data: $(this).serialize(),
             success: function(response) {
-                $("#order-messages").html('<div class="success"><p>' + response + '</p></div>');
-                // Clear form or reset fields as needed
+                // Close the modal
+                if (window.parent && typeof window.parent.closeAllModals === "function") {
+                    window.parent.closeAllModals();
+                } else if (typeof closeAllModals === "function") {
+                    closeAllModals();
+                } else {
+                    // Fallback: hide modal by ID
+                    $("#orderModal").hide();
+                }
+                // Show popup
+                alert(response);
             },
             error: function(xhr, status, error) {
-                $("#order-messages").html('<div class="error"><p>Error: ' + error + '</p></div>');
+                alert("Order failed: " + error);
             }
         });
     });
-      $("#datepicker").datepicker({
-          dateFormat: "mm/dd/yy",
-          minDate: 0 // This restricts to current date and future
-      });
 });
+// ...existing code...
 
 </script>

@@ -8,33 +8,279 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
     <style>
+       /* Modal Overlay and Content */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 1000;
             left: 0;
             top: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.5);
         }
         .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 20px;
-            width: 50%;
-            border-radius: 10px;
+            background: #fff;
+            margin: 5% auto;
+            padding: 1.2em 1em 1em 1em;
+            width: 100%;
+            max-width: 700px; /* Increased from 420px or 540px */
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            position: relative;
+            text-align: left;
         }
         .close {
-            color: red;
+            color: #c0392b;
             float: right;
             font-size: 28px;
+            font-weight: bold;
             cursor: pointer;
+            margin-top: -10px;
+            margin-right: -10px;
         }
+        .close:hover {
+            color: #e74c3c;
+        }
+
+        /* Datepicker fix */
         .ui-datepicker {
             z-index: 999999 !important;
             position: absolute !important;
+        }
+
+        /* Order Modal Container */
+        #order-modal-container {
+            padding: 0;
+            background: none;
+            box-shadow: none;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            box-sizing: border-box;
+        }
+
+            /* Order Form Fields */
+            .order-field {
+            display: flex;
+            align-items: center;
+            gap: 0.7em;
+            margin-bottom: 0.8em;
+            background: #f7f7fa;
+            padding: 0.6em 0.8em;
+            border-radius: 7px;
+            overflow-x: auto;
+            flex-wrap: nowrap;      /* Prevent wrapping */
+        }
+
+        .order-field select,
+        .order-field input[type="number"],
+        .order-field button,
+        .order-field .quantity-label,
+        .order-field .total-label,
+        .order-field .total-price {
+            min-width: 0;
+            flex-shrink: 1;
+            width: auto;
+            box-sizing: border-box;
+        }
+        .order-field .quantity-label,
+        .order-field .total-label {
+            font-size: 0.98em;
+            color: #444;
+        }
+        .order-field .total-price {
+            min-width: 70px;
+            text-align: right;
+            color: #2c3e50;
+            font-weight: 500;
+            margin-left: 0.3em;
+        }
+
+        /* Remove Item Button */
+        .remove-item-btn {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 0.3em 0.8em;
+            margin-left: 0.7em;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background 0.2s;
+        }
+        .remove-item-btn:hover {
+            background: #c0392b;
+        }
+
+        .add-item-btn {
+            width: auto !important;
+            background: rgb(243, 111, 34);
+            color: #fff;
+            display: inline-block;
+            padding: 0.5em 1.5em;
+            margin: 0.5em 0 0 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            box-shadow: none;
+            transition: background 0.2s;
+        }
+        .add-item-btn:hover {
+            background:rgb(211, 96, 30);
+        }
+
+
+        /* Add Item Button */
+        .order-modal-add-btn {
+            background: #e1ecf4;
+            color: #0366d6;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5em 1.2em;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 0.5em;
+            transition: background 0.2s;
+            display: block;
+        }
+        .order-modal-add-btn:hover {
+            background: #d1e7f7;
+        }
+
+        /* Totals */
+        .order-modal-totals {
+            margin: 1.2em 0 1em 0;
+            font-size: 1.08em;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 0.2em;
+        }
+
+        /* Submit Button */
+        .order-modal-submit-btn {
+            background: #27ae60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 0.7em 2em;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.7em;
+        }
+        .order-modal-submit-btn:hover {
+            background: #219150;
+        }
+        /* Modal/Order Form Specific Overrides */
+        #order-modal-container form,
+        .modal-content form {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            box-shadow: none;
+            display: block;
+            margin-bottom: 0;
+        }
+
+        #order-modal-container button,
+        .modal-content button,
+        .order-field button,
+        .remove-item-btn,
+        .order-modal-add-btn,
+        .order-modal-submit-btn,
+        .add-item-button {
+            width: auto;
+            margin: 0;
+            padding: 0.3em 0.8em;
+            border: none;
+            border-radius: 4px;
+            box-shadow: none;
+        }
+
+        #order-modal-container input[type="text"],
+        #order-modal-container input[type="email"],
+        #order-modal-container input[type="submit"],
+        .modal-content input[type="text"],
+        .modal-content input[type="email"],
+        .modal-content input[type="submit"] {
+            width: auto;
+            margin: 0;
+            padding: 0.3em 0.5em;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: none;
+        }
+
+        .order-modal-add-btn,
+        .order-modal-submit-btn,
+        .add-item-button {
+            width: auto !important;
+            display: inline-block;
+            padding: 0.5em 1.5em;
+            margin: 0.5em 0 0 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            box-shadow: none;
+            transition: background 0.2s;
+        }
+
+        .order-modal-add-btn {
+            background: #e1ecf4;
+            color: #0366d6;
+        }
+        .order-modal-add-btn:hover {
+            background: #d1e7f7;
+        }
+
+        .order-modal-submit-btn {
+            background: #27ae60;
+            color: #fff;
+        }
+        .order-modal-submit-btn:hover {
+            background: #219150;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+        .modal-content, #order-modal-container {
+            padding: 0.5em 0.2em;
+            font-size: 0.98em;
+            width: 98vw;
+            max-width: 98vw;
+        }
+        .order-field {
+            gap: 0.3em;
+        }
+        .order-modal-totals {
+            flex-direction: column;
+            gap: 0.3em;
+        }
+
+        table, thead, tbody, th, td, tr {
+            display: block;
+        }
+        thead tr {
+            display: none;
+        }
+        td {
+            position: relative;
+            padding-left: 50%;
+            min-width: 120px;
+            white-space: normal;
+            text-align: left;
+        }
+            td:before {
+                position: absolute;
+                left: 10px;
+                top: 12px;
+                white-space: nowrap;
+                font-weight: bold;
+                content: attr(data-label);
+            }
         }
     </style>
 </head>
@@ -51,7 +297,7 @@
 </nav>
 
 <form method="POST">
-    <input type="text" id="search" placeholder="Type to search..." onkeyup="fetchData()">
+    <input type="text" id="search" placeholder="Search customers..." onkeyup="fetchData()">
 </form>
 
 <button onclick="openCustomerModal()">Add Customer</button>
@@ -94,7 +340,7 @@
     <div class="modal-content">
         <span class="close" onclick="closeAllModals()">&times;</span>
         <div id="modal-body"></div>
-        <button onclick="openNewItemModal()">+ Add New Item</button>
+        <button onclick="openNewItemModal()" class="add-item-btn">Add New Item to System</button>
     </div>
 </div>
 
