@@ -7,40 +7,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 20px;
-            width: 60%;
-            max-height: 80vh;
-            overflow-y: auto;
-            border-radius: 10px;
-            position: relative;
-        }
-        .close {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 20px;
-            cursor: pointer;
-            color: red;
-        }
-        tr:hover {
-            background-color: #f0f0f0;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
 
